@@ -16,6 +16,17 @@ Windows 版 Claude Desktop 的本地中文界面补丁。项目通过本机 HTTP
 - 设计系统创建、Claude Code 上传组件、Figma/代码/素材导入流程。
 - Cowork、Artifact/作品、连接器、设置、菜单等常用界面。
 
+## 和常见汉化方案的区别
+
+这个项目不是简单替换几个本地语言文件，而是围绕 Claude Desktop 新版本的实际问题做了一套更稳的运行时补丁：
+
+- **重点覆盖 Claude Design**：目前很多汉化项目还停留在聊天页和菜单层面，Design 首页、空白画布、设计系统、示例页、作品/Artifact 细节容易漏。本项目把这些新界面作为重点维护。
+- **避开 Workspace VM / Cowork 故障**：只代理静态资源域名，不代理 `a.claude.ai`，避免因为拦截主 API 域名导致登录回退、Workspace VM 连接超时、Cowork VM service not running 等问题。
+- **不强行使用不被官方接受的 locale**：Claude 后端当前只接受固定 locale 列表。脚本会在前端显示中文，同时把请求里的 `zh-CN` 回写成官方可接受的 `en-US`，避免出现 `locale: Input should be ...` 的报错。
+- **运行时 DOM 补丁更细**：除了普通文本，也处理 `placeholder`、`aria-label`、tooltip、按钮属性、部分输入框固定 UI 值等，因此能覆盖更多弹窗、菜单和动态界面。
+- **可安装、可卸载、可恢复**：提供 `install.ps1` / `uninstall.ps1`，自动创建桌面快捷方式，并尽量把 hosts、代理例外、缓存清理这些步骤做成一键流程。
+- **保留 Claude 原有能力**：不改动账号登录链路，不拦截会话通信域名，目标是汉化界面而不是破坏 Claude Desktop 的工作区、连接器和远程能力。
+
 ## 截图预览
 
 ### Claude Design 首页
