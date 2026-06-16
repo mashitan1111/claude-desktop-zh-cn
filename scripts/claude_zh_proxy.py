@@ -129,6 +129,16 @@ MANUAL_UI_REPLACEMENTS = {
     "Share": "分享",
     "New sketch": "新草图",
     "Paste": "粘贴",
+    "Edit": "编辑",
+    "Discard": "放弃",
+    "Save": "保存",
+    "Reload": "重新加载",
+    "Present": "演示",
+    "Mark up": "标注",
+    "Comments": "评论",
+    "Simple": "简单",
+    "Pro": "专业版",
+    "Add something with the tools above (R · F · O · T), paste, or drop an image onto the canvas.": "使用上方工具添加内容（R · F · O · T），或粘贴/拖入图片到画布。",
     "Creations will appear here": "生成内容会显示在这里",
     "Start with a blank canvas": "从空白画布开始",
     "DROP FILES HERE": "拖放文件到这里",
@@ -556,6 +566,8 @@ PARTIAL_UI_REPLACEMENTS = {
     "Creations will appear here": "生成内容会显示在这里",
     "Start with a blank canvas": "从空白画布开始",
     "DROP FILES HERE": "拖放文件到这里",
+    "Add something with the tools above": "使用上方工具添加内容",
+    "paste, or drop an image onto the canvas.": "或粘贴/拖入图片到画布。",
     "Images, docs, references": "图片、文档、参考资料",
     "Describe what you want to create": "描述你想创建的内容",
     "Make a deck": "制作演示稿",
@@ -868,7 +880,34 @@ def runtime_js() -> bytes:
   const partialPairs = {js_partial_pairs};
   const knownSources = pairs.map(([source]) => source).filter((source) => source && source.length <= 80);
   const blocked = "SCRIPT,STYLE,TEXTAREA,INPUT,PRE,CODE";
-  const attrs = ["placeholder", "title", "aria-label", "data-placeholder"];
+  const attrs = [
+    "placeholder",
+    "title",
+    "aria-label",
+    "aria-description",
+    "aria-valuetext",
+    "data-placeholder",
+    "data-title",
+    "data-tooltip",
+    "data-tooltip-content",
+    "alt"
+  ];
+  const safeFixedUiTexts = new Set([
+    "DROP FILES HERE",
+    "New blank canvas",
+    "New sketch",
+    "Paste",
+    "Edit",
+    "Discard",
+    "Save",
+    "Reload",
+    "Present",
+    "Mark up",
+    "Comments",
+    "Simple",
+    "Pro",
+    "Add something with the tools above (R · F · O · T), paste, or drop an image onto the canvas."
+  ]);
   let changedCount = 0;
   let reportCount = 0;
   let lastReport = "";
@@ -982,11 +1021,19 @@ def runtime_js() -> bytes:
   }}
   function isSafeFixedUiValue(value) {{
     const text = (value || "").trim();
-    return isSafeEditablePlaceholderValue(text) ||
-      text === "DROP FILES HERE" ||
-      text === "New blank canvas" ||
-      text === "New sketch" ||
-      text === "Paste";
+    return isSafeEditablePlaceholderValue(text) || safeFixedUiTexts.has(text);
+  }}
+  function patchFormControlValue(el) {{
+    if (!el?.matches?.("input,textarea")) return;
+    const value = el.value;
+    if (isSafeFixedUiValue(value)) {{
+      const translated = translateValue(value);
+      if (translated && translated !== value) {{
+        el.value = translated;
+        el.defaultValue = translated;
+        changedCount++;
+      }}
+    }}
   }}
   function patchElement(el) {{
     const hasSafeEditablePlaceholder = el?.closest?.("[contenteditable='true']") &&
@@ -1003,6 +1050,7 @@ def runtime_js() -> bytes:
         changedCount++;
       }}
     }}
+    patchFormControlValue(el);
     if (el.shadowRoot) {{
       observeRoot(el.shadowRoot);
       walk(el.shadowRoot);
