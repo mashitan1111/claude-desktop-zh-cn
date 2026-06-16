@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+
+# Local runtime state
+scripts/certs/
+scripts/*.log
+scripts/*.pid
+scripts/upstream_ip.txt
+scripts/upstream_ips.json
+scripts/runtime.generated.js
+scripts/hosts.backup.*
+scripts/ProxyOverride.backup.*
+outputs/
+
+# Local editor/system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
