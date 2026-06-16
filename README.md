@@ -2,11 +2,38 @@
 
 Windows 版 Claude Desktop 的本地中文界面补丁。项目通过本机 HTTPS 代理注入运行时汉化脚本，尽量不改动 Claude 主程序文件。
 
-> 当前主要覆盖 Claude Desktop、Cowork、Design、Artifact/作品区常见界面。图片、视频、Canvas 预览内容里的英文不属于 DOM 文本，暂时不会被脚本翻译。
+> 当前主要覆盖 Claude Desktop、Cowork、Claude Design、Artifact/作品区常见界面。图片、视频、Canvas 预览内容里的英文不属于 DOM 文本，暂时不会被脚本翻译。
+
+## 为什么做这个
+
+很多 Claude Desktop 汉化方案主要覆盖聊天页、菜单和设置页，Claude Design、空白画布、设计系统、作品/Artifact 等新功能页面容易漏翻。本项目的重点就是把这些高频但难覆盖的界面也补齐，让中文用户可以直接看懂 Design 工作流。
+
+目前已重点适配：
+
+- Claude Design 首页、最近设计、示例、设计系统。
+- 幻灯片、原型、产品线框图、文档、动画等 Design 创建入口。
+- 空白画布编辑器、拖放区、画布工具栏和生成输入框。
+- 设计系统创建、Claude Code 上传组件、Figma/代码/素材导入流程。
+- Cowork、Artifact/作品、连接器、设置、菜单等常用界面。
+
+## 截图预览
+
+### Claude Design 首页
+
+![Claude Design 首页汉化](docs/screenshots/design-home.png)
+
+### 空白画布 / 线框图流程
+
+![Claude Design 空白画布汉化](docs/screenshots/design-wireframe-canvas.png)
+
+### 设计系统弹窗
+
+![Claude Design 设计系统汉化](docs/screenshots/design-system-modal.png)
 
 ## 特性
 
-- 内置常用中文词库，包含登录、聊天、协作、设计、作品、设置、菜单等界面。
+- 内置常用中文词库，包含登录、聊天、协作、Claude Design、作品、设置、菜单等界面。
+- 针对 Claude Design 做了额外补丁，覆盖空白画布、设计系统、示例页、创建流程等细节。
 - 只拦截静态资源域名：`assets-proxy.anthropic.com`、`a-cdn.claude.ai`。
 - 不拦截 `a.claude.ai`，避免影响登录、Workspace VM、会话通信。
 - 自动创建桌面快捷方式：`Claude 中文版`。
