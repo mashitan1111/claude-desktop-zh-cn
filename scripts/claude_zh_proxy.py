@@ -1177,7 +1177,7 @@ def inject_runtime_loader_js(text: str) -> str:
         "const s=document.createElement('script');"
         "s.src='https://assets-proxy.anthropic.com/claude-zh-cn/runtime.js';"
         "s.defer=true;(document.head||document.documentElement).appendChild(s)"
-        "}catch(e){}}})();"
+        "}catch(e){}})();"
     )
 
 
@@ -1197,8 +1197,6 @@ def maybe_patch_asset(path: Path, body: bytes) -> bytes:
         return patch_index_js(body.decode("utf-8", errors="replace")).encode("utf-8")
     if name.startswith("cec18ad9a-") and name.endswith(".js"):
         return patch_cec_js(body.decode("utf-8", errors="replace")).encode("utf-8")
-    if name.endswith(".js"):
-        return inject_runtime_loader_js(body.decode("utf-8", errors="replace")).encode("utf-8")
     return body
 
 
@@ -1228,8 +1226,6 @@ def maybe_patch_upstream_response(host: str, path: str, body: bytes, content_typ
             patched = patch_index_js(body.decode("utf-8", errors="replace")).encode("utf-8")
         elif name.startswith("cec18ad9a-"):
             patched = patch_cec_js(body.decode("utf-8", errors="replace")).encode("utf-8")
-        elif name.endswith(".js"):
-            patched = inject_runtime_loader_js(body.decode("utf-8", errors="replace")).encode("utf-8")
         return patched
     return body
 
